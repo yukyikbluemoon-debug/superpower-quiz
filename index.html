@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ค้นหาพลังพิเศษของฉัน</title>
+<link href="https://fonts.googleapis.com/css2?family=Mali:wght@500;700&family=Sarabun:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#232566; --ink2:#34378f; --sun:#ffc93c; --mint:#35d6a8; --paper:#fffdf7; --text:#25264d; --soft:#e9e9ff;
+  --head:'Mali','Sarabun',sans-serif; --body:'Sarabun',system-ui,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{font-family:var(--body);color:var(--text);background:var(--ink);min-height:100vh;
+  background-image:radial-gradient(circle at 15% 0,#4a4db8 0,transparent 45%),radial-gradient(circle at 100% 100%,#2b8f84 0,transparent 40%);
+  display:flex;justify-content:center;padding:16px}
+main{width:100%;max-width:520px}
+.card{background:var(--paper);border-radius:22px;padding:22px 20px;box-shadow:0 10px 0 rgba(0,0,0,.18);margin-top:8px}
+h1,h2,h3{font-family:var(--head);margin:0 0 10px;line-height:1.35}
+h1{font-size:28px} h2{font-size:21px}
+p{line-height:1.7;margin:0 0 12px;font-size:17px}
+.hint{font-size:15px;color:#5b5d92}
+input[type=text]{width:100%;font:inherit;font-size:18px;padding:12px 14px;border:3px solid var(--soft);border-radius:14px;background:#fff;color:var(--text);margin:6px 0 16px}
+input:focus,button:focus-visible{outline:3px solid var(--sun);outline-offset:2px}
+.btn{font-family:var(--head);font-size:19px;font-weight:700;background:var(--sun);color:#3b2d00;border:0;border-radius:16px;padding:14px 20px;width:100%;cursor:pointer;box-shadow:0 5px 0 #d9a21a}
+.btn:active{transform:translateY(3px);box-shadow:0 2px 0 #d9a21a}
+.btn.ghost{background:var(--soft);color:var(--ink);box-shadow:0 5px 0 #c4c4ee;margin-top:10px}
+.xp{height:14px;background:rgba(255,255,255,.2);border-radius:99px;overflow:hidden;margin:4px 0 6px}
+.xp i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--sun),var(--mint));border-radius:99px;transition:width .4s}
+.top{color:#fff;font-family:var(--head);font-size:15px;display:flex;justify-content:space-between}
+.opt{display:block;width:100%;text-align:left;font:inherit;font-size:17px;line-height:1.5;background:#fff;color:var(--text);border:3px solid var(--soft);border-radius:16px;padding:13px 15px;margin:0 0 10px;cursor:pointer;transition:transform .1s,border-color .1s,background .1s}
+.opt:hover{border-color:var(--ink2)}
+.opt.pick{background:#fff3c9;border-color:var(--sun);transform:scale(1.02)}
+.badge{font-size:64px;line-height:1;margin-bottom:6px}
+.bar{margin:12px 0}
+.bar b{font-family:var(--head);font-size:16px;display:flex;justify-content:space-between}
+.bar span{display:block;height:13px;background:var(--soft);border-radius:99px;overflow:hidden;margin-top:4px}
+.bar span i{display:block;height:100%;background:var(--ink2);border-radius:99px;width:0;transition:width .9s}
+.bar.first span i{background:linear-gradient(90deg,var(--sun),var(--mint))}
+.power{border-left:6px solid var(--sun);background:#fff;border-radius:14px;padding:12px 14px;margin:12px 0}
+.power h3{font-size:18px;margin-bottom:4px}
+.power p{font-size:16px;margin:0 0 6px}
+.mission{background:var(--ink);color:#fff;border-radius:16px;padding:14px 16px;margin:14px 0}
+.mission p{margin:0;font-size:16px}
+.msg{background:#e6fbf4;border-radius:16px;padding:14px 16px;font-size:17px;line-height:1.7}
+.hide{display:none}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<main>
+
+<!-- หน้าแรก -->
+<section id="intro" class="card">
+  <div class="badge" aria-hidden="true">🎮</div>
+  <h1>ค้นหาพลังพิเศษของฉัน</h1>
+  <p>ทุกคนมีพลังพิเศษไม่เหมือนกัน แบบทดสอบนี้ <b>ไม่มีถูก ไม่มีผิด</b> ตอบตามความรู้สึกจริงของเรา แล้วมาดูกันว่าพลังของเราคืออะไร</p>
+  <label for="nm" class="hint">ชื่อเล่นของนักผจญภัย</label>
+  <input id="nm" type="text" maxlength="20" placeholder="พิมพ์ชื่อเล่น" autocomplete="off">
+  <button class="btn" id="go">เริ่มภารกิจ</button>
+</section>
+
+<!-- คำถาม -->
+<section id="quiz" class="hide">
+  <div class="top"><span id="qn"></span><span>EXP</span></div>
+  <div class="xp"><i id="xp"></i></div>
+  <div class="card">
+    <h2 id="qt"></h2>
+    <div id="opts"></div>
+  </div>
+</section>
+
+<!-- ผลลัพธ์ -->
+<section id="result" class="hide">
+  <div class="card">
+    <div class="badge" id="rb" aria-hidden="true"></div>
+    <p class="hint" id="rname"></p>
+    <h1 id="rtitle"></h1>
+    <p id="rdesc"></p>
+    <h2>เลเวลพลังของเรา</h2>
+    <div id="bars"></div>
+    <h2>พลังที่เด่นที่สุด 3 อย่าง</h2>
+    <div id="powers"></div>
+    <div class="mission"><h3 style="color:var(--sun);font-size:17px">ภารกิจเลเวลอัปสัปดาห์นี้</h3><p id="mis"></p></div>
+    <div class="msg" id="parent"></div>
+    <button class="btn ghost" id="again">ลองเล่นอีกครั้ง</button>
+  </div>
+</section>
+
+</main>
+<script>
+/* ===== ส่วนที่พ่อแก้ได้ ===== */
+// ข้อความจากพ่อ (ใช้ {name} แทนชื่อน้อง) — ควรเขียนสิ่งที่จริงและเจาะจง เด็กจะรู้สึกได้
+const PARENT_MSG = "{name} พ่อเห็นนะว่าเรามีพลังเหล่านี้จริงๆ และพ่อภูมิใจในตัวเรา ในแบบของเราเอง เราไม่ต้องเป็นเหมือนใคร พ่อเชื่อว่าเราไปได้ไกล";
+
+/* ===== ข้อมูล ===== */
+const T = {
+  strategy:{e:"🧠",n:"นักวางแผน",title:"นักกลยุทธ์ผู้เฉียบแหลม",
+    d:"เรามองภาพรวมเป็น และคิดล่วงหน้าได้ว่าจะทำอะไรก่อนหลัง คนที่วางแผนเก่งมักเป็นคนที่ทีมไว้ใจ",
+    s:"พลังนี้คือหัวใจของคณิตศาสตร์และวิทยาศาสตร์ การแก้โจทย์ก็คือการวางแผนทีละขั้นเหมือนในเกม",
+    m:"ก่อนทำการบ้าน ลองวางแผน 3 ข้อสั้นๆ ว่าจะทำอะไรก่อน-หลัง เหมือนวางแผนก่อนลุยด่านบอส แล้วดูว่าทำได้กี่ข้อ"},
+  grit:{e:"🔥",n:"ใจสู้",title:"นักสู้ที่ไม่ยอมแพ้",
+    d:"เราล้มแล้วลุกได้ ไม่ทิ้งงานกลางทาง ความอดทนแบบนี้เป็นพลังที่หลายคนอยากมีแต่ไม่มี",
+    s:"คนที่ใจสู้ คือคนที่ในที่สุดจะเก่งขึ้นทุกวิชา เพราะการเก่งเกิดจากการลองซ้ำ ไม่ใช่เกิดมาเก่ง",
+    m:"เลือกโจทย์หรือเรื่องที่ยากที่สุด 1 ข้อในวันนี้ ลองให้ครบ 10 นาทีโดยไม่ยอมแพ้ แล้วเก็บแต้มความสำเร็จ"},
+  team:{e:"🤝",n:"เพื่อนร่วมทีม",title:"แกนกลางของทีม",
+    d:"เราใส่ใจคนอื่นและทำให้คนรอบข้างอยากสู้ต่อ ความเป็นเพื่อนที่ดีแบบนี้เป็นพลังที่หายาก",
+    s:"โลกการทำงานจริงต้องการคนแบบนี้มาก ใครเก่งทั้งงานและเก่งเรื่องคน จะไปได้ไกลเสมอ",
+    m:"สัปดาห์นี้ ลองชวนคนที่บ้านหรือเพื่อนมาติวหรืออธิบายอะไรสักเรื่องให้ฟัง การสอนคนอื่นคือการเรียนรู้ที่ดีที่สุด"},
+  observe:{e:"🔍",n:"ช่างสังเกต",title:"นักสืบตาไว",
+    d:"เรามองเห็นรายละเอียดที่คนอื่นมองข้าม สายตาและความสนใจแบบนี้คือพลังของนักคิดและนักวิทยาศาสตร์",
+    s:"นักวิทยาศาสตร์เก่งๆ เริ่มจากการสังเกต พลังนี้ช่วยให้เรียนชีววิทยา วิทยาศาสตร์ และการอ่านโจทย์ได้ดีมาก",
+    m:"วันนี้ลองสังเกตสิ่งรอบตัว 3 อย่างที่ปกติไม่ทันสังเกต แล้วเล่าให้ที่บ้านฟังว่าเจออะไร"},
+  creative:{e:"💡",n:"นักคิดสร้างสรรค์",title:"จอมไอเดียสร้างสรรค์",
+    d:"เรามีมุมมองที่ไม่เหมือนใคร และกล้าลองวิธีใหม่ๆ ความคิดสร้างสรรค์คือพลังที่เปลี่ยนโลกได้",
+    s:"คนคิดต่างมักมีวิธีแก้โจทย์ที่น่าทึ่ง ลองใช้พลังนี้กับการจำ การเขียน และการแก้ปัญหา",
+    m:"ลองหาวิธีจำเรื่องที่ท่องยากๆ แบบของตัวเอง เช่น วาดเป็นภาพ แต่งเป็นเรื่อง แล้วเอามาโชว์ที่บ้าน"},
+  learn:{e:"⚡",n:"เรียนรู้ไว",title:"ผู้เรียนรู้สายฟ้า",
+    d:"เราจับหลักของสิ่งใหม่ได้เร็ว และรู้จักเอาบทเรียนจากความพลาดมาพัฒนาตัวเอง นั่นคือพลังของคนที่เก่งขึ้นเรื่อยๆ",
+    s:"สมองของเรายืดหยุ่นและพัฒนาได้เสมอ ยิ่งฝึกยิ่งแข็งแรง การเรียนรู้ไว คือพลังที่ใช้ได้ในทุกวิชา",
+    m:"เลือกเรื่องใหม่ 1 เรื่องที่อยากรู้ ลองศึกษา 15 นาที แล้วสรุปให้ที่บ้านฟังใน 3 ประโยค"}
+};
+
+const Q = [
+ ["เวลาเจอด่านที่ยากมากๆ ในเกม เรามักจะ…",[["strategy","หยุดคิดวางแผนก่อน แล้วค่อยลุยอีกรอบ"],["grit","ลองใหม่เรื่อยๆ จนผ่านให้ได้"],["team","ชวนเพื่อนมาช่วยกัน"],["learn","ดูวิธีของคนเก่งแล้วจำมาปรับใช้"]]],
+ ["ในทีม เรามักเป็นคนที่…",[["observe","เห็นจุดอ่อนของปัญหาก่อนใคร"],["team","คอยเชียร์ให้เพื่อนสู้ต่อ"],["creative","คิดวิธีแปลกๆ ที่ไม่มีใครคิด"],["strategy","รู้ว่าควรใช้อะไรให้เหมาะกับสถานการณ์"]]],
+ ["ถ้าได้เกมใหม่ที่ไม่เคยเล่น เรา…",[["learn","จับกติกาได้เร็วกว่าคนอื่น"],["creative","ชอบลองทำสิ่งที่เกมไม่ได้บอกไว้"],["observe","สังเกตรายละเอียดเล็กๆ ที่คนอื่นมองข้าม"],["grit","ไม่ยอมแพ้จนกว่าจะเก่งขึ้น"]]],
+ ["เวลาเพื่อนมีปัญหา เรามักจะ…",[["team","ฟังและอยู่ข้างๆ เพื่อน"],["creative","คิดทางออกให้ได้หลายแบบ"],["strategy","ใจเย็น ช่วยวิเคราะห์ว่าเกิดอะไรขึ้น"],["observe","รู้ว่าเพื่อนไม่สบายใจ แม้เขาไม่พูด"]]],
+ ["เวลาทำอะไรพลาด เรามักจะ…",[["learn","เก็บเป็นบทเรียน รอบหน้าทำดีกว่าเดิม"],["grit","ลุกขึ้นมาลองใหม่ทันที"],["team","ขอคำแนะนำจากคนที่เก่งกว่า"],["strategy","คิดแผนใหม่ให้ดีกว่าเดิม"]]],
+ ["เราภูมิใจที่สุดตอนที่…",[["grit","ทำสิ่งที่ยากจนสำเร็จ"],["team","ได้ช่วยคนอื่นจนสำเร็จ"],["creative","คิดอะไรใหม่ๆ ออกมาได้"],["learn","เข้าใจเรื่องที่เคยไม่เข้าใจ"]]],
+ ["ถ้ามีเวลาว่าง 1 ชั่วโมง เราอยากทำอะไร?",[["creative","ประดิษฐ์ วาด หรือสร้างบางอย่าง"],["learn","ศึกษาเรื่องที่เราสนใจ"],["grit","ท้าตัวเองทำสิ่งที่ยากขึ้นอีกนิด"],["team","ชวนเพื่อนหรือคนในบ้านมาทำด้วยกัน"]]],
+ ["คนอื่นมักบอกว่าเราเป็นคนที่…",[["observe","ตาไว ช่างสังเกต"],["strategy","คิดเป็นขั้นเป็นตอน"],["grit","ใจสู้"],["team","เข้ากับคนอื่นง่าย"]]],
+ ["ถ้าเจอปริศนาที่ยากมากๆ เรา…",[["grit","ไม่ปล่อยค้าง ต้องแก้ให้ได้"],["observe","ค่อยๆ ไล่หาเงื่อนงำ"],["creative","ลองมองจากมุมที่ต่างจากคนอื่น"],["strategy","วางแผนแก้ทีละขั้น"]]],
+ ["สิ่งที่เราอยากเก่งขึ้นในอนาคตคือ…",[["learn","เรียนรู้สิ่งใหม่ให้ไวขึ้น"],["team","เป็นคนที่ทีมไว้ใจ"],["creative","สร้างผลงานของตัวเอง"],["observe","สังเกตและคิดวิเคราะห์ให้เฉียบ"]]]
+];
+
+/* ===== ตรรกะ ===== */
+const $ = id => document.getElementById(id);
+let i = 0, name = "", score = {};
+
+function show(id){ ["intro","quiz","result"].forEach(s => $(s).classList.toggle("hide", s !== id)); window.scrollTo(0,0); }
+
+function start(){
+  name = $("nm").value.trim() || "นักผจญภัย";
+  i = 0; score = {}; Object.keys(T).forEach(k => score[k] = 0);
+  show("quiz"); render();
+}
+
+function render(){
+  $("qn").textContent = "ข้อ " + (i+1) + " จาก " + Q.length;
+  $("xp").style.width = (i / Q.length * 100) + "%";
+  $("qt").textContent = Q[i][0];
+  const box = $("opts"); box.innerHTML = "";
+  Q[i][1].forEach(([k,txt]) => {
+    const b = document.createElement("button");
+    b.className = "opt"; b.type = "button"; b.textContent = txt;
+    b.onclick = () => {
+      b.classList.add("pick"); score[k]++;
+      [...box.children].forEach(x => x.disabled = true);
+      setTimeout(() => { i++; i < Q.length ? render() : finish(); }, 280);
+    };
+    box.appendChild(b);
+  });
+}
+
+function finish(){
+  $("xp").style.width = "100%";
+  const ranked = Object.keys(T).sort((a,b) => score[b] - score[a]);
+  const max = Math.max(1, score[ranked[0]]);
+  const top = ranked.slice(0,3), main = T[top[0]];
+  $("rb").textContent = main.e;
+  $("rname").textContent = "ผลของ " + name;
+  $("rtitle").textContent = main.title;
+  $("rdesc").textContent = main.d;
+
+  // แถบพลัง: ทุกพลังอยู่ที่ระดับ 60–100 (ตั้งใจให้เป็นผลเชิงบวก)
+  $("bars").innerHTML = ranked.map((k,idx) => {
+    const lv = 60 + Math.round(score[k] / max * 40);
+    return '<div class="bar' + (idx===0?' first':'') + '"><b><span style="all:unset">' + T[k].e + ' ' + T[k].n + '</span><span style="all:unset">Lv.' + lv + '</span></b><span><i data-w="' + lv + '"></i></span></div>';
+  }).join("");
+  setTimeout(() => document.querySelectorAll(".bar i").forEach(el => el.style.width = el.dataset.w + "%"), 80);
+
+  $("powers").innerHTML = top.map(k =>
+    '<div class="power"><h3>' + T[k].e + ' ' + T[k].n + '</h3><p>' + T[k].s + '</p></div>').join("");
+  $("mis").textContent = main.m;
+  $("parent").textContent = PARENT_MSG.replace("{name}", name);
+  show("result");
+}
+
+$("go").onclick = start;
+$("nm").addEventListener("keydown", e => { if (e.key === "Enter") start(); });
+$("again").onclick = () => { show("intro"); };
+</script>
+</body>
+</html>
